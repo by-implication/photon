@@ -20,16 +20,19 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
 
     private Point location;
 
-    private String queryStringFilter;
+    private String queryStringMust;
 
-    private ReverseQueryBuilder(Point location, Double radius, String queryStringFilter) {
+    private String queryStringMustNot;
+
+    private ReverseQueryBuilder(Point location, Double radius, String queryStringMust, String queryStringMustNot) {
         this.location = location;
         this.radius = radius;
-        this.queryStringFilter = queryStringFilter;
+        this.queryStringMust = queryStringMust;
+        this.queryStringMustNot = queryStringMustNot;
     }
 
-    public static TagFilterQueryBuilder builder(Point location, Double radius, String queryStringFilter) {
-        return new ReverseQueryBuilder(location, radius, queryStringFilter);
+    public static TagFilterQueryBuilder builder(Point location, Double radius, String queryStringMust, String queryStringMustNot) {
+        return new ReverseQueryBuilder(location, radius, queryStringMust, queryStringMustNot);
     }
 
     @Override
@@ -116,11 +119,18 @@ public class ReverseQueryBuilder implements TagFilterQueryBuilder {
                 .distance(radius, DistanceUnit.KILOMETERS);
 
         BoolQueryBuilder finalQuery;
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
 
-        if (queryStringFilter != null && queryStringFilter.trim().length() > 0)
-            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.queryStringQuery(queryStringFilter)).filter(fb);
-        else
-            finalQuery = QueryBuilders.boolQuery().must(QueryBuilders.matchAllQuery()).filter(fb);
+        if (queryStringMust != null || queryStringMustNot != null)
+            boolQuery = boolQuery.must(QueryBuilders.matchAllQuery());
+
+        if (queryStringMust != null && queryStringMust.trim().length() > 0)
+            boolQuery = boolQuery.must(QueryBuilders.queryStringQuery(queryStringMust));
+
+        if (queryStringMustNot != null && queryStringMustNot.trim().length() > 0)
+            boolQuery = boolQuery.mustNot(QueryBuilders.queryStringQuery(queryStringMustNot));
+
+        finalQuery = boolQuery.filter(fb);
 
         return finalQuery;
     }

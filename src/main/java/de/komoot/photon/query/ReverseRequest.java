@@ -12,15 +12,17 @@ public class ReverseRequest implements Serializable {
     private String language;
     private Double radius;
     private Integer limit;
-    private String queryStringFilter;
+    private String queryStringMust;
+    private String queryStringMustNot;
     private Boolean locationDistanceSort = true;
 
-    public ReverseRequest(Point location, String language, Double radius, String queryStringFilter, Integer limit, Boolean locationDistanceSort) {
+    public ReverseRequest(Point location, String language, Double radius, String queryStringMust, String queryStringMustNot, Integer limit, Boolean locationDistanceSort) {
         this.location = location;
         this.language = language;
         this.radius = radius;
         this.limit = limit;
-        this.queryStringFilter = queryStringFilter;
+        this.queryStringMust = queryStringMust;
+        this.queryStringMustNot = queryStringMustNot;
         this.locationDistanceSort = locationDistanceSort;
     }
 
@@ -40,8 +42,12 @@ public class ReverseRequest implements Serializable {
         return limit;
     }
 
-    public String getQueryStringFilter() {
-        return queryStringFilter;
+    public String getQueryStringMust() {
+        return queryStringMust;
+    }
+
+    public String getQueryStringMustNot() {
+        return queryStringMustNot;
     }
 
     public Boolean getLocationDistanceSort() {

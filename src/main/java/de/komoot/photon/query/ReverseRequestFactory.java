@@ -17,7 +17,7 @@ public class ReverseRequestFactory {
     private final LanguageChecker languageChecker;
     private final static GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
 
-    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "query_string_filter", "distance_sort", "limit"));
+    protected static HashSet<String> m_hsRequestQueryParams = new HashSet<>(Arrays.asList("lang", "lon", "lat", "radius", "must", "must_not", "distance_sort", "limit"));
 
     public ReverseRequestFactory(Set<String> supportedLanguages) {
         this.languageChecker = new LanguageChecker(supportedLanguages);
@@ -87,8 +87,9 @@ public class ReverseRequestFactory {
             }
         }
 
-        String queryStringFilter = webRequest.queryParams("query_string_filter");
-        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringFilter, limit, locationDistanceSort);
+        String queryStringMust = webRequest.queryParams("must");
+        String queryStringMustNot = webRequest.queryParams("must_not");
+        ReverseRequest reverseRequest = new ReverseRequest(location, language, radius, queryStringMust, queryStringMustNot, limit, locationDistanceSort);
         return (R) reverseRequest;
     }
 }
